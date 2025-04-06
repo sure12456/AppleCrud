@@ -1,17 +1,12 @@
 import express from 'express';
+import reminderRoutes from './routes/remindersRoutes.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-  });
-
-app.get('/surendra', (req, res) => {
-  res.send('Hello Surendra!');
-});
+app.use(express.json());
+app.use('/reminders', reminderRoutes);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
-

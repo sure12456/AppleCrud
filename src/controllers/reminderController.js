@@ -1,53 +1,54 @@
 import { ReminderService } from "../services/remindersService.js";
 
 export const ReminderController = {
-    async getAllReminders(req, res) {
+    async getAllReminders(req, res, next) {
+        console.log("Calling getAllReminders controller");
         try {
             const reminders = await ReminderService.getAllReminders();
             res.status(200).json(reminders);
         } catch (error) {
-            res.status(500).send({ message: 'Internal Server Error' });
+            next(error);
         }
     },
 
-    async getReminderByID(req, res) {
+    async getReminderByID(req, res, next) {
         try {
             const reminderId = parseInt(req.params.id);
             const reminder = await ReminderService.getReminderById(reminderId);
             res.status(200).json(reminder);
         } catch (error) {
-            res.status(500).send({ message: 'Internal Server Error' });
+            next(error);
         }
     },
 
-    async createReminder(req, res) {
+    async createReminder(req, res, next) {
         try {
             const reminder = await ReminderService.createReminder(req.body);
             res.status(200).json(reminder);
         } catch (error) {
-            res.status(500).send({ message: 'Internal Server Error' });
+            next(error);
         }
         const reminder = req.body.reminder;
         res.send(reminder);
     },
 
-    async updateReminder(req, res) {
+    async updateReminder(req, res, next) {
         try {
             const reminderId = parseInt(req.params.id);
             const reminder = await ReminderService.updateReminder(reminderId, req.body);
             res.status(200).json(reminder);
         } catch (error) {
-            res.status(500).send({ message: 'Internal Server Error', error: error });
+            next(error);
         }
     },
 
-    async deleteReminder(req, res) {
+    async deleteReminder(req, res, next) {
         try {
             const reminderId = parseInt(req.params.id);
             const reminder = await ReminderService.deleteReminder(reminderId);
             res.status(200).json(reminder);
         } catch (error) {
-            res.status(500).send({ message: 'Internal Server Error' });
+            next(error);
             
         }
         res.send('Delete old reminder');

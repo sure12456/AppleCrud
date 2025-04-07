@@ -21,10 +21,7 @@ export const ReminderModel = {
     },
 
     async update(query, values) {
-        console.log("Query", query)
-        console.log("Values", values)
         const result = await db.query(query, values);
-        console.log("Result", result)
         return result.rows[0];
     },
 

@@ -1,4 +1,6 @@
+import ERROR_MESSAGES from "../constants/errorMessages.js";
 import { ReminderModel } from "../models/reminderModel.js";
+import CustomError from "../utils/CustomError.js";
 
 export const ReminderService = {
     async getAllReminders() {
@@ -10,7 +12,7 @@ export const ReminderService = {
         // Fetch a reminder by ID
         const reminder = await ReminderModel.findById(reminderId);
         if (!reminder) {
-            throw new Error('Reminder not found');
+            throw new CustomError(ERROR_MESSAGES.REMINDER_NOT_FOUND, 404);
         }
         return reminder;
     },
@@ -34,12 +36,8 @@ export const ReminderService = {
         const fields = Object.keys(newValues);
 
         const setClause = fields.map((key, index) => `${key} = $${index + 1}`);
-        console.log("Set Clause", setClause)
         const values = Object.values(newValues);
         values.push(reminderId);
-
-        console.log("Values", values)
-        console.log("Join ", setClause.join(", "))
 
         const query = `
             UPDATE reminders
@@ -49,7 +47,7 @@ export const ReminderService = {
         `
         const updatedReminder = await ReminderModel.update(query, values);
         if (!updatedReminder) {
-            throw new Error('Reminder not found');
+            throw new CustomError(ERROR_MESSAGES.REMINDER_NOT_FOUND, 404);
         }
         return updatedReminder;
     },
@@ -61,17 +59,17 @@ export const ReminderService = {
         const reminder = await ReminderModel.findById(reminderId);
 
         if (!reminder) {
-            throw new Error('Reminder not found');
+            throw new CustomError(ERROR_MESSAGES.REMINDER_NOT_FOUND, 404);
         };
 
         if (reminder.user_id !== authenticatedUserId) {
-            throw new Error('You are not authorized to delete this reminder');
+            throw new CustomError(ERROR_MESSAGES.UNAUTHORIZED, 403);
         };
 
         const rowCount = await ReminderModel.delete(reminderId);
 
         if (rowCount === 0) {
-            throw new Error('Failed to delete reminder');
+            throw new CustomError(ERROR_MESSAGES.INTERNAL_SERVER_ERROR, 500);
         }
 
         return {message: 'Reminder deleted successfully'};
